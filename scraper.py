@@ -197,7 +197,18 @@ def scrape_college_info(driver,URLS):
     except Exception as e:
         pass
     # ================= COLLEGE NAME =================
-    wait.until(EC.presence_of_element_located((By.TAG_NAME, "h1")))
+    from selenium.common.exceptions import TimeoutException
+
+    try:
+        wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+
+        h1 = driver.find_elements(By.TAG_NAME, "h1")
+        if not h1:
+            raise Exception("College page not loaded (no h1)")
+
+    except TimeoutException:
+        print("Body itself did not load")
+
     data["college_info"]["college_name"] = driver.find_element(By.TAG_NAME, "h1").text.strip()
 
     # ================= LOCATION + CITY =================
